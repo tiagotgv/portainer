@@ -73,6 +73,10 @@ func (server *Server) Start() error {
 	dockerHandler.EndpointService = server.EndpointService
 	dockerHandler.TeamMembershipService = server.TeamMembershipService
 	dockerHandler.ProxyManager = proxyManager
+	var kubernetesHandler = handler.NewKubernetesHandler(requestBouncer)
+	kubernetesHandler.EndpointService = server.EndpointService
+	kubernetesHandler.TeamMembershipService = server.TeamMembershipService
+	kubernetesHandler.ProxyManager = proxyManager
 	var websocketHandler = handler.NewWebSocketHandler()
 	websocketHandler.EndpointService = server.EndpointService
 	var endpointHandler = handler.NewEndpointHandler(requestBouncer, server.EndpointManagement)
@@ -111,6 +115,7 @@ func (server *Server) Start() error {
 		StackHandler:          stackHandler,
 		TemplatesHandler:      templatesHandler,
 		DockerHandler:         dockerHandler,
+		KubernetesHandler:     kubernetesHandler,
 		WebSocketHandler:      websocketHandler,
 		FileHandler:           fileHandler,
 		UploadHandler:         uploadHandler,

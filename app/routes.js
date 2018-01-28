@@ -147,7 +147,21 @@ function configureRoutes($stateProvider) {
       }
     }
   })
-  .state('dashboard', {
+  .state('kubernetesdashboard', {
+    parent: 'root',
+    url: '/dashboard',
+    views: {
+      'content@': {
+        templateUrl: 'app/components/kubernetes/dashboard/dashboard.html',
+        controller: 'KubernetesDashboardController'
+      }
+      // 'sidebar@': {
+      //   templateUrl: 'app/components/sidebar/sidebar.html',
+      //   controller: 'SidebarController'
+      // }
+    }
+  })
+  .state('dockerdashboard', {
     parent: 'root',
     url: '/dashboard',
     views: {

@@ -59,6 +59,7 @@ type (
 	postEndpointsRequest struct {
 		Name                string `valid:"required"`
 		URL                 string `valid:"required"`
+		Type                int    `valid:"required"`
 		PublicURL           string `valid:"-"`
 		TLS                 bool
 		TLSSkipVerify       bool
@@ -128,6 +129,7 @@ func (handler *EndpointHandler) handlePostEndpoints(w http.ResponseWriter, r *ht
 
 	endpoint := &portainer.Endpoint{
 		Name:      req.Name,
+		Type:      portainer.EndpointType(req.Type),
 		URL:       req.URL,
 		PublicURL: req.PublicURL,
 		TLSConfig: portainer.TLSConfiguration{

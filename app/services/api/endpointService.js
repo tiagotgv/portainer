@@ -57,9 +57,10 @@ angular.module('portainer.services')
     return Endpoints.create({}, endpoint).$promise;
   };
 
-  service.createRemoteEndpoint = function(name, URL, PublicURL, TLS, TLSSkipVerify, TLSSkipClientVerify, TLSCAFile, TLSCertFile, TLSKeyFile) {
+  service.createRemoteEndpoint = function(name, URL, type, PublicURL, TLS, TLSSkipVerify, TLSSkipClientVerify, TLSCAFile, TLSCertFile, TLSKeyFile) {
     var endpoint = {
       Name: name,
+      Type: type,
       URL: 'tcp://' + URL,
       PublicURL: PublicURL,
       TLS: TLS,

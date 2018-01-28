@@ -17,7 +17,7 @@
             <div class="form-group">
               <div class="col-sm-12">
                 <span class="small text-muted">
-                  Connect Portainer to the Docker environment you want to manage.
+                  Connect Portainer to the environment you want to manage.
                 </span>
               </div>
             </div>
@@ -26,30 +26,40 @@
             <div class="form-group" style="margin-bottom: 0">
               <div class="boxselector_wrapper">
                 <div>
-                  <input type="radio" id="local_endpoint" ng-model="formValues.EndpointType" value="local">
-                  <label for="local_endpoint">
+                  <input type="radio" id="local_docker_endpoint" ng-model="formValues.EndpointType" value="localDocker">
+                  <label for="local_docker_endpoint">
                     <div class="boxselector_header">
                       <i class="fa fa-bolt" aria-hidden="true" style="margin-right: 2px;"></i>
-                      Local
+                      Local Docker
                     </div>
                     <p>Manage the Docker environment where Portainer is running</p>
                   </label>
                 </div>
                 <div>
-                  <input type="radio" id="remote_endpoint" ng-model="formValues.EndpointType" value="remote">
-                  <label for="remote_endpoint">
+                  <input type="radio" id="remote_docker_endpoint" ng-model="formValues.EndpointType" value="remoteDocker">
+                  <label for="remote_docker_endpoint">
                     <div class="boxselector_header">
                       <i class="fa fa-plug" aria-hidden="true" style="margin-right: 2px;"></i>
-                      Remote
+                      Remote Docker
                     </div>
                     <p>Manage a remote Docker environment</p>
+                  </label>
+                </div>
+                <div>
+                  <input type="radio" id="remote_kubernetes_endpoint" ng-model="formValues.EndpointType" value="remoteKubernetes">
+                  <label for="remote_kubernetes_endpoint">
+                    <div class="boxselector_header">
+                      <i class="fa fa-plug" aria-hidden="true" style="margin-right: 2px;"></i>
+                      Remote Kubernetes
+                    </div>
+                    <p>Manage a remote Kubernetes environment</p>
                   </label>
                 </div>
               </div>
             </div>
             <!-- !endpoint-type  -->
             <!-- local-endpoint -->
-            <div ng-if="formValues.EndpointType === 'local'">
+            <div ng-if="formValues.EndpointType === 'localDocker'">
               <div class="form-group">
                 <div class="col-sm-12">
                   <span class="small">
@@ -76,7 +86,7 @@
             </div>
             <!-- !local-endpoint -->
             <!-- remote-endpoint -->
-            <div ng-if="formValues.EndpointType === 'remote'">
+            <div ng-if="formValues.EndpointType === 'remoteDocker' || formValues.EndpointType === 'remoteKubernetes'">
               <!-- name-input -->
               <div class="form-group">
                 <label for="endpoint_name" class="col-sm-4 col-lg-3 control-label text-left">Name</label>
@@ -186,7 +196,7 @@
               <!-- actions -->
               <div class="form-group">
                 <div class="col-sm-12">
-                  <button type="submit" class="btn btn-primary btn-sm" ng-disabled="state.actionInProgress || !formValues.Name || !formValues.URL || (formValues.TLS && ((formValues.TLSVerify && !formValues.TLSCACert) || (!formValues.TLSSKipClientVerify && (!formValues.TLSCert || !formValues.TLSKey))))" ng-click="createRemoteEndpoint()" button-spinner="state.actionInProgress">
+                  <button type="submit" class="btn btn-primary btn-sm" ng-disabled="state.actionInProgress || !formValues.Name || !formValues.URL || (formValues.TLS && ((formValues.TLSVerify && !formValues.TLSCACert) || (!formValues.TLSSKipClientVerify && (!formValues.TLSCert || !formValues.TLSKey))))" ng-click="formValues.EndpointType === 'remoteDocker' ? createRemoteDockerEndpoint() : createRemoteKubernetesEndpoint()" button-spinner="state.actionInProgress">
                     <span ng-hide="state.actionInProgress"><i class="fa fa-bolt" aria-hidden="true"></i> Connect</span>
                     <span ng-show="state.actionInProgress">Connecting...</span>
                   </button>

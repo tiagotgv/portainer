@@ -14,7 +14,7 @@ function ($scope, $state, EndpointService, StateManager, EndpointProvider, Notif
   };
 
   $scope.formValues = {
-    EndpointType: 'remote',
+    EndpointType: 'remoteDocker',
     Name: '',
     URL: '',
     TLS: false,
@@ -49,7 +49,11 @@ function ($scope, $state, EndpointService, StateManager, EndpointProvider, Notif
     });
   };
 
-  $scope.createRemoteEndpoint = function() {
+  $scope.createRemoteDockerEndpoint = function() {
+    createRemoteEndpoint();
+  };
+
+  $scope.createRemoteKubernetesEndpoint = function() {
     var name = $scope.formValues.Name;
     var URL = $scope.formValues.URL;
     var PublicURL = URL.split(':')[0];
@@ -62,7 +66,35 @@ function ($scope, $state, EndpointService, StateManager, EndpointProvider, Notif
     var endpointID = 1;
 
     $scope.state.actionInProgress = true;
-    EndpointService.createRemoteEndpoint(name, URL, PublicURL, TLS, TLSSkipVerify, TLSSKipClientVerify, TLSCAFile, TLSCertFile, TLSKeyFile)
+    EndpointService.createRemoteEndpoint(name, URL, 1, PublicURL, TLS, TLSSkipVerify, TLSSKipClientVerify, TLSCAFile, TLSCertFile, TLSKeyFile)
+    .then(function success(data) {
+      endpointID = data.Id;
+      EndpointProvider.setEndpointID(endpointID);
+      $state.go('kubernetesdashboard');
+    })
+    .catch(function error(err) {
+      Notifications.error('Failure', err, 'Unable to connect to the Kubernetes environment');
+      EndpointService.deleteEndpoint(endpointID);
+    })
+    .finally(function final() {
+      $scope.state.actionInProgress = false;
+    });
+  };
+
+  function createRemoteEndpoint() {
+    var name = $scope.formValues.Name;
+    var URL = $scope.formValues.URL;
+    var PublicURL = URL.split(':')[0];
+    var TLS = $scope.formValues.TLS;
+    var TLSSkipVerify = TLS && $scope.formValues.TLSSkipVerify;
+    var TLSSKipClientVerify = TLS && $scope.formValues.TLSSKipClientVerify;
+    var TLSCAFile = TLSSkipVerify ? null : $scope.formValues.TLSCACert;
+    var TLSCertFile = TLSSKipClientVerify ? null : $scope.formValues.TLSCert;
+    var TLSKeyFile = TLSSKipClientVerify ? null : $scope.formValues.TLSKey;
+    var endpointID = 1;
+
+    $scope.state.actionInProgress = true;
+    EndpointService.createRemoteEndpoint(name, URL, 0, PublicURL, TLS, TLSSkipVerify, TLSSKipClientVerify, TLSCAFile, TLSCertFile, TLSKeyFile)
     .then(function success(data) {
       endpointID = data.Id;
       EndpointProvider.setEndpointID(endpointID);
@@ -72,11 +104,11 @@ function ($scope, $state, EndpointService, StateManager, EndpointProvider, Notif
       $state.go('dashboard');
     })
     .catch(function error(err) {
-      Notifications.error('Failure', err, 'Unable to connect to the Docker environment');
+      Notifications.error('Failure', err, 'Unable to connect to the environment');
       EndpointService.deleteEndpoint(endpointID);
     })
     .finally(function final() {
       $scope.state.actionInProgress = false;
     });
-  };
+  }
 }]);

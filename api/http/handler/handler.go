@@ -25,6 +25,7 @@ type Handler struct {
 	SettingsHandler       *SettingsHandler
 	TemplatesHandler      *TemplatesHandler
 	DockerHandler         *DockerHandler
+	KubernetesHandler     *KubernetesHandler
 	WebSocketHandler      *WebSocketHandler
 	UploadHandler         *UploadHandler
 	FileHandler           *FileHandler
@@ -50,6 +51,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case strings.HasPrefix(r.URL.Path, "/api/endpoints"):
 		if strings.Contains(r.URL.Path, "/docker/") {
 			http.StripPrefix("/api/endpoints", h.DockerHandler).ServeHTTP(w, r)
+		} else if strings.Contains(r.URL.Path, "/kubernetes/") {
+			http.StripPrefix("/api/endpoints", h.KubernetesHandler).ServeHTTP(w, r)
 		} else if strings.Contains(r.URL.Path, "/stacks") {
 			http.StripPrefix("/api/endpoints", h.StackHandler).ServeHTTP(w, r)
 		} else {

@@ -36,18 +36,25 @@ func (manager *Manager) CreateAndRegisterProxy(endpoint *portainer.Endpoint) (ht
 		return nil, err
 	}
 
-	if endpointURL.Scheme == "tcp" {
-		if endpoint.TLSConfig.TLS {
-			proxy, err = manager.proxyFactory.newHTTPSProxy(endpointURL, endpoint)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			proxy = manager.proxyFactory.newHTTPProxy(endpointURL)
+	if endpoint.Type == portainer.KubernetesEndpoint {
+		proxy, err = manager.proxyFactory.newKubernetesHTTPSProxy(endpointURL, endpoint)
+		if err != nil {
+			return nil, err
 		}
 	} else {
-		// Assume unix:// scheme
-		proxy = manager.proxyFactory.newSocketProxy(endpointURL.Path)
+		if endpointURL.Scheme == "tcp" {
+			if endpoint.TLSConfig.TLS {
+				proxy, err = manager.proxyFactory.newDockerHTTPSProxy(endpointURL, endpoint)
+				if err != nil {
+					return nil, err
+				}
+			} else {
+				proxy = manager.proxyFactory.newDockerHTTPProxy(endpointURL)
+			}
+		} else {
+			// Assume unix:// scheme
+			proxy = manager.proxyFactory.newDockerSocketProxy(endpointURL.Path)
+		}
 	}
 
 	manager.proxies.Set(string(endpoint.ID), proxy)

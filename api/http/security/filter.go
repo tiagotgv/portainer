@@ -87,7 +87,7 @@ func FilterEndpoints(endpoints []portainer.Endpoint, context *RestrictedRequestC
 		filteredEndpoints = make([]portainer.Endpoint, 0)
 
 		for _, endpoint := range endpoints {
-			if isEndpointAccessAuthorized(&endpoint, context.UserID, context.UserMemberships) {
+			if AuthorizedEndpointAccess(&endpoint, context.UserID, context.UserMemberships) {
 				filteredEndpoints = append(filteredEndpoints, endpoint)
 			}
 		}
@@ -104,22 +104,6 @@ func isRegistryAccessAuthorized(registry *portainer.Registry, userID portainer.U
 	}
 	for _, membership := range memberships {
 		for _, authorizedTeamID := range registry.AuthorizedTeams {
-			if membership.TeamID == authorizedTeamID {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func isEndpointAccessAuthorized(endpoint *portainer.Endpoint, userID portainer.UserID, memberships []portainer.TeamMembership) bool {
-	for _, authorizedUserID := range endpoint.AuthorizedUsers {
-		if authorizedUserID == userID {
-			return true
-		}
-	}
-	for _, membership := range memberships {
-		for _, authorizedTeamID := range endpoint.AuthorizedTeams {
 			if membership.TeamID == authorizedTeamID {
 				return true
 			}

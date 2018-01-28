@@ -169,10 +169,14 @@ type (
 	// EndpointID represents an endpoint identifier.
 	EndpointID int
 
+	// EndpointType represents the associated environment (Docker, Kubernetes).
+	EndpointType int
+
 	// Endpoint represents a Docker endpoint with all the info required
 	// to connect to it.
 	Endpoint struct {
 		ID              EndpointID       `json:"Id"`
+		Type            EndpointType     `json:"Type"`
 		Name            string           `json:"Name"`
 		URL             string           `json:"URL"`
 		PublicURL       string           `json:"PublicURL"`
@@ -452,4 +456,12 @@ const (
 	StackResourceControl
 	// ConfigResourceControl represents a resource control associated to a Docker config
 	ConfigResourceControl
+)
+
+const (
+	_ EndpointType = iota
+	// DockerEndpoint represents a Docker environment
+	DockerEndpoint
+	// KubernetesEndpoint represents a Kubernetes environment
+	KubernetesEndpoint
 )

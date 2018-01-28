@@ -15,8 +15,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// DockerHandler represents an HTTP API handler for proxying requests to the Docker API.
-type DockerHandler struct {
+// KubernetesHandler represents an HTTP API handler for proxying requests to the Kubernetes API.
+type KubernetesHandler struct {
 	*mux.Router
 	Logger                *log.Logger
 	EndpointService       portainer.EndpointService
@@ -24,18 +24,18 @@ type DockerHandler struct {
 	ProxyManager          *proxy.Manager
 }
 
-// NewDockerHandler returns a new instance of DockerHandler.
-func NewDockerHandler(bouncer *security.RequestBouncer) *DockerHandler {
-	h := &DockerHandler{
+// NewKubernetesHandler returns a new instance of KubernetesHandler.
+func NewKubernetesHandler(bouncer *security.RequestBouncer) *KubernetesHandler {
+	h := &KubernetesHandler{
 		Router: mux.NewRouter(),
 		Logger: log.New(os.Stderr, "", log.LstdFlags),
 	}
-	h.PathPrefix("/{id}/docker").Handler(
-		bouncer.AuthenticatedAccess(http.HandlerFunc(h.proxyRequestsToDockerAPI)))
+	h.PathPrefix("/{id}/kubernetes").Handler(
+		bouncer.AuthenticatedAccess(http.HandlerFunc(h.proxyRequestsToKubernetesAPI)))
 	return h
 }
 
-func (handler *DockerHandler) proxyRequestsToDockerAPI(w http.ResponseWriter, r *http.Request) {
+func (handler *KubernetesHandler) proxyRequestsToKubernetesAPI(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
@@ -79,5 +79,5 @@ func (handler *DockerHandler) proxyRequestsToDockerAPI(w http.ResponseWriter, r 
 		}
 	}
 
-	http.StripPrefix("/"+id+"/docker", proxy).ServeHTTP(w, r)
+	http.StripPrefix("/"+id+"/kubernetes", proxy).ServeHTTP(w, r)
 }

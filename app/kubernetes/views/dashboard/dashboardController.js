@@ -1,5 +1,5 @@
-angular.module('portainer.kubernetes', [])
-.controller('KubernetesDashboardController', ['$scope', 'Notifications', 'Namespace',
+angular.module('portainer.kubernetes')
+.controller('DashboardController', ['$scope', 'Notifications', 'Namespace',
 function ($scope, Notifications, Namespace) {
 
   function initView() {

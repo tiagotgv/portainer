@@ -47,10 +47,11 @@ function ($q, $scope, $state, Settings, EndpointService, StateManager, EndpointP
     $scope.displayExternalContributors = StateManager.getState().application.displayExternalContributors;
     $scope.logo = StateManager.getState().application.logo;
     $scope.endpoints = [];
-    
+
     EndpointService.endpoints()
     .then(function success(data) {
       var endpoints = data;
+      console.log(JSON.stringify(endpoints, null, 4));
       $scope.endpoints = _.sortBy(endpoints, ['Name']);
       setActiveEndpoint(endpoints);
 

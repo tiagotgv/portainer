@@ -1,6 +1,7 @@
 package security
 
 import (
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -29,6 +30,7 @@ func NewRateLimiter(maxRequests int, duration time.Duration, banDuration time.Du
 func (limiter *RateLimiter) LimitAccess(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ip := StripAddrPort(r.RemoteAddr)
+		log.Printf("[DEBUG] [host: %s] [remote_addr: %s] [ip: %s] [message: rate limiter address check]", r.Host, r.RemoteAddr, ip)
 		if banned := limiter.Inc(ip); banned == true {
 			httperror.WriteError(w, http.StatusForbidden, "Access denied", portainer.ErrResourceAccessDenied)
 			return
